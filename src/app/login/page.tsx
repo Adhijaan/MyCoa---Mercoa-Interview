@@ -34,8 +34,8 @@ export default function Login() {
       if (!response.ok) {
         throw new Error(data.message || "Failed to sign in");
       } else {
-        // Redirect to dashboard on successful login
-        router.push("/dashboard");
+        // Redirect to dashboard/home on successful login
+        router.push("/dashboard/home");
       }
     } catch (err: any) {
       setError(err.message);
