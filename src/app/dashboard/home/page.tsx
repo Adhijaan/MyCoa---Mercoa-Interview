@@ -9,6 +9,7 @@ interface Business {
   entity_name: string;
   email: string;
   mercoa_entity_id: string;
+  mercoa_user_id: string;
   is_on_boarded: boolean;
 }
 

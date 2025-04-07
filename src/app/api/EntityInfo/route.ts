@@ -25,7 +25,7 @@ export async function GET(request: Request) {
 
   const business_id = userBusiness.business_id;
 
-  //Get business entity information
+  // Get business entity information
   const { data: businessData, error: businessError } = await supabase
     .from("businesses")
     .select("*")

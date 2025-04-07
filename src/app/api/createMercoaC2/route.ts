@@ -8,6 +8,14 @@ const mercoa = new MercoaClient({
 });
 
 export async function POST(req: NextRequest) {
+  // Authenticate the user
+  const supabase = await createSupabaseServerClient();
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+  if (userError || !userData.user) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
+  const auth_user_id = userData.user.id;
+
   try {
     // Fetch entity info
     const { legalName, email } = await req.json();
@@ -31,14 +39,15 @@ export async function POST(req: NextRequest) {
     });
     console.log("Mercoa Entity Created:", entity);
 
-    const supabase = await createSupabaseServerClient();
+    // Create sole user (for demo purposes) - could be fixed later to allow multiple users
+    const user = await mercoa.entity.user.create(entity.id, {
+      foreignId: "MY-DB-ID-12345",
+      email: userData.user.email,
+      name: "Business Owner",
+      roles: ["admin", "approver"],
+    });
 
-    // Authenticate the user
-    const { data: userData, error: userError } = await supabase.auth.getUser();
-    if (userError || !userData.user) {
-      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-    }
-    const auth_user_id = userData.user.id;
+    console.log("Mercoa User Created:", user);
 
     // Get the user business
     const { data: userBusiness, error: userBusinessError } = await supabase
@@ -59,6 +68,7 @@ export async function POST(req: NextRequest) {
       .update({
         is_on_boarded: true,
         mercoa_entity_id: entity.id,
+        mercoa_user_id: user.id,
         // Not sure if I should actulaly store the KYB yet
       })
       .eq("id", business_id)
