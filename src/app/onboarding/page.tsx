@@ -23,19 +23,20 @@ export default function OnboardingPage() {
 
     // Set onbaording status to true
     try {
-      const res = await fetch("/api/EntityInfo", {
-        method: "PUT",
+      const res1 = await fetch("/api/createMercoaC2", {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ is_on_boarded: true }),
+        body: JSON.stringify({ legalName, email }),
       });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.message || "Failed to complete onboarding");
+      const data1 = await res1.json();
+      if (!res1.ok) {
+        setError(data1.error || "Failed to onboard business");
+        return;
       }
+
       // Success!
-      console.log("Business onboarded:", data.business);
       router.push("/dashboard/home");
     } catch (err) {
       console.error("Network or unexpected error:", err);
