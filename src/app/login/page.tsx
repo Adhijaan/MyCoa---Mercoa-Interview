@@ -31,11 +31,15 @@ export default function Login() {
 
       const data = await response.json();
 
+      console.log("Login response:", data);
+
       if (!response.ok) {
         throw new Error(data.message || "Failed to sign in");
       } else {
         // Redirect to dashboard/home on successful login
-        router.push("/dashboard/home");
+        console.log("Login successful:", data);
+        window.location.href = "/dashboard/home"; // Since the middleware sometimes doesnt see the cookie set yet.
+        //router.push("/dashboard/home");
       }
     } catch (err: any) {
       setError(err.message);
